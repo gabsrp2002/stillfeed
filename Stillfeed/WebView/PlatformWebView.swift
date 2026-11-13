@@ -129,6 +129,10 @@ struct PlatformWebView: UIViewRepresentable {
         }
     }
 
+    static func dismantleUIView(_ uiView: WKWebView, coordinator: Coordinator) {
+        coordinator.tearDown(webView: uiView)
+    }
+
     @MainActor
     final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
         let platform: SocialPlatform
@@ -169,6 +173,22 @@ struct PlatformWebView: UIViewRepresentable {
                     }
                 }
             ]
+        }
+
+        func tearDown(webView: WKWebView) {
+            observations.forEach { $0.invalidate() }
+            observations.removeAll()
+
+            webView.stopLoading()
+            webView.pauseAllMediaPlayback(completionHandler: nil)
+            webView.closeAllMediaPresentations(completionHandler: nil)
+            webView.navigationDelegate = nil
+            webView.uiDelegate = nil
+            webView.configuration.userContentController.removeAllUserScripts()
+
+            if controller.webView === webView {
+                controller.webView = nil
+            }
         }
 
         private func enforceSPAURL(_ url: URL, in webView: WKWebView) {
