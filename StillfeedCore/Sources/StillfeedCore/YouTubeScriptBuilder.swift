@@ -130,7 +130,7 @@ public struct YouTubeScriptBuilder: Sendable {
               for (var i = 0; i < shortLinks.length; i++) {
                 var card = shortLinks[i].closest('ytm-reel-shelf-renderer, ytm-shorts-lockup-view-model, ytm-video-with-context-renderer, ytm-compact-video-renderer, ytm-grid-video-renderer, ytm-rich-item-renderer');
                 if (card) {
-                  card.setAttribute('data-stillfeed-hidden', '1');
+                  markStillfeedHidden(card, '1');
                 }
               }
             }
@@ -140,10 +140,10 @@ public struct YouTubeScriptBuilder: Sendable {
               for (var j = 0; j < pivotItems.length; j++) {
                 var label = (pivotItems[j].textContent || '').trim().toLowerCase();
                 if (cfg.hideShortsEverywhere && label === 'shorts') {
-                  pivotItems[j].setAttribute('data-stillfeed-hidden', '1');
+                  markStillfeedHidden(pivotItems[j], '1');
                 }
                 if (cfg.replaceHomeWithSubscriptions && (label === 'home' || label === 'início' || label === 'inicio' || label === 'principal')) {
-                  pivotItems[j].setAttribute('data-stillfeed-hidden', '1');
+                  markStillfeedHidden(pivotItems[j], '1');
                 }
               }
             }
@@ -154,7 +154,7 @@ public struct YouTubeScriptBuilder: Sendable {
                 var sec = sections[k];
                 var idAttr = sec.getAttribute('section-identifier') || '';
                 if (idAttr === 'related-items') {
-                  sec.setAttribute('data-stillfeed-hidden', '1');
+                  markStillfeedHidden(sec, '1');
                 }
               }
             }
@@ -199,12 +199,7 @@ public struct YouTubeScriptBuilder: Sendable {
           window.addEventListener('yt-navigate-start', sweep);
           window.addEventListener('yt-navigate-finish', sweep);
 
-          var observer = new MutationObserver(function() {
-            sweepShortsAndUpNext();
-          });
-          if (document.body) {
-            observer.observe(document.body, { childList: true, subtree: true });
-          }
+          observeDOMWithThrottle(sweepShortsAndUpNext, 80);
 
           window.__stillfeedUpdateConfig = function(nextConfig) {
             window.__stillfeedConfig = nextConfig;

@@ -73,7 +73,9 @@ public struct InstagramScriptBuilder: Sendable {
             else if (path === '/reel' || path.indexOf('/reel/') === 0) page = 'single-reel';
             else if (path.indexOf('/explore') === 0) page = 'explore';
             else if (path.indexOf('/direct') === 0) page = 'direct';
-            document.documentElement.setAttribute('data-stillfeed-page', page);
+            if (document.documentElement.getAttribute('data-stillfeed-page') !== page) {
+              document.documentElement.setAttribute('data-stillfeed-page', page);
+            }
             return page;
           }
 
@@ -107,7 +109,7 @@ public struct InstagramScriptBuilder: Sendable {
             var links = document.querySelectorAll('a[href*="/reels"]');
             for (var i = 0; i < links.length; i++) {
               var container = links[i].closest('div[role="presentation"], li, nav > div > div') || links[i];
-              container.setAttribute('data-stillfeed-hidden', '1');
+              markStillfeedHidden(container, '1');
             }
           }
 
@@ -133,7 +135,7 @@ public struct InstagramScriptBuilder: Sendable {
             for (var i = 0; i < mediaLinks.length; i++) {
               var gridItem = mediaLinks[i].closest('div[style*="flex-direction"], article, div > div > div') || mediaLinks[i];
               if (searchInput && gridItem.contains(searchInput)) continue;
-              gridItem.setAttribute('data-stillfeed-hidden', 'explore-grid');
+              markStillfeedHidden(gridItem, 'explore-grid');
             }
           }
 
@@ -157,7 +159,7 @@ public struct InstagramScriptBuilder: Sendable {
               var article = articles[i];
               if (article.getAttribute('data-stillfeed-hidden') === '1') continue;
 
-              var rawText = (article.innerText || '').toLowerCase();
+              var rawText = (article.textContent || '').toLowerCase();
               var isSuggested = false;
               for (var p = 0; p < suggestedPhrases.length; p++) {
                 if (rawText.indexOf(suggestedPhrases[p]) !== -1) {
@@ -188,7 +190,7 @@ public struct InstagramScriptBuilder: Sendable {
               }
 
               if (isSuggested || hasFollowButton) {
-                article.setAttribute('data-stillfeed-hidden', '1');
+                markStillfeedHidden(article, '1');
               }
             }
           }
@@ -200,7 +202,7 @@ public struct InstagramScriptBuilder: Sendable {
             for (var i = 0; i < lists.length; i++) {
               var list = lists[i];
               if (list.querySelector('[aria-label*="Story"], [aria-label*="story"]')) {
-                (list.closest('div[role="region"]') || list).setAttribute('data-stillfeed-hidden', 'stories');
+                markStillfeedHidden(list.closest('div[role="region"]') || list, 'stories');
               }
             }
           }
@@ -267,12 +269,7 @@ public struct InstagramScriptBuilder: Sendable {
           wrapHistoryMethod('replaceState');
           window.addEventListener('popstate', sweep);
 
-          var observer = new MutationObserver(function() {
-            sweep();
-          });
-          if (document.body) {
-            observer.observe(document.body, { childList: true, subtree: true });
-          }
+          observeDOMWithThrottle(sweep, 80);
 
           window.__stillfeedUpdateConfig = function(nextConfig) {
             window.__stillfeedConfig = nextConfig;

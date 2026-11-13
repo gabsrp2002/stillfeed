@@ -117,7 +117,33 @@ enum AppUpsellScriptHelper {
           }
 
           function normalizeUpsellText(el) {
-            return ((el && (el.innerText || el.textContent)) || '').replace(/\\s+/g, ' ').trim().toLowerCase();
+            return ((el && el.textContent) || '').replace(/\\s+/g, ' ').trim().toLowerCase();
+          }
+
+          function markStillfeedHidden(el, value) {
+            if (!el) return;
+            var targetValue = value || '1';
+            if (el.getAttribute('data-stillfeed-hidden') !== targetValue) {
+              el.setAttribute('data-stillfeed-hidden', targetValue);
+            }
+          }
+
+          function observeDOMWithThrottle(runFn, delayMs) {
+            var timer = null;
+            var wait = typeof delayMs === 'number' ? delayMs : 80;
+            function schedule() {
+              if (timer !== null) return;
+              timer = setTimeout(function() {
+                timer = null;
+                runFn();
+              }, wait);
+            }
+            var observer = new MutationObserver(schedule);
+            var target = document.body || document.documentElement;
+            if (target) {
+              observer.observe(target, { childList: true, subtree: true });
+            }
+            return observer;
           }
 
           function isProtectedUpsellContainer(node) {
@@ -185,9 +211,9 @@ enum AppUpsellScriptHelper {
               if (!isAppLink && !matchesUpsellLabel(el)) continue;
               var target = resolveUpsellContainer(el);
               if (target && !isProtectedUpsellContainer(target)) {
-                target.setAttribute('data-stillfeed-hidden', '1');
+                markStillfeedHidden(target, '1');
               } else {
-                el.setAttribute('data-stillfeed-hidden', '1');
+                markStillfeedHidden(el, '1');
               }
             }
 
@@ -208,7 +234,7 @@ enum AppUpsellScriptHelper {
                 }
               }
               if (matched) {
-                resolveUpsellContainer(dlg).setAttribute('data-stillfeed-hidden', '1');
+                markStillfeedHidden(resolveUpsellContainer(dlg), '1');
               }
             }
           }

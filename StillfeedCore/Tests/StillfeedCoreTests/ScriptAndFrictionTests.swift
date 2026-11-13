@@ -44,6 +44,21 @@ final class ScriptAndFrictionTests: XCTestCase {
         XCTAssertTrue(ytScripts.documentEndScript.contains("\"abrir en la app\""))
     }
 
+    func testScriptsAvoidInnerTextReflowAndUseThrottledObserver() {
+        let config = StillfeedConfig()
+        let composer = ScriptComposer()
+
+        let igScripts = composer.buildScripts(for: .instagram, config: config)
+        XCTAssertFalse(igScripts.documentEndScript.contains("innerText"))
+        XCTAssertTrue(igScripts.documentEndScript.contains("observeDOMWithThrottle"))
+        XCTAssertTrue(igScripts.documentEndScript.contains("markStillfeedHidden"))
+
+        let ytScripts = composer.buildScripts(for: .youtube, config: config)
+        XCTAssertFalse(ytScripts.documentEndScript.contains("innerText"))
+        XCTAssertTrue(ytScripts.documentEndScript.contains("observeDOMWithThrottle"))
+        XCTAssertTrue(ytScripts.documentEndScript.contains("markStillfeedHidden"))
+    }
+
     func testFrictionLockStateLifecycle() {
         let start = Date(timeIntervalSince1970: 1_000_000)
         let config = FrictionLockConfig(isEnabled: true, holdDurationSeconds: 10, autoRelockMinutes: 15)
