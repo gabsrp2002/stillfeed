@@ -21,6 +21,29 @@ final class ScriptAndFrictionTests: XCTestCase {
         XCTAssertTrue(update.contains("\"hideComments\":true"))
     }
 
+    func testScriptsSuppressAppUpsellNotificationsAcrossLanguages() {
+        let config = StillfeedConfig()
+        let composer = ScriptComposer()
+
+        let igScripts = composer.buildScripts(for: .instagram, config: config)
+        XCTAssertTrue(igScripts.documentStartScript.contains("apps.apple.com"))
+        XCTAssertTrue(igScripts.documentStartScript.contains("instagram://"))
+        XCTAssertTrue(igScripts.documentEndScript.contains("hideAppUpsellBanners"))
+        XCTAssertTrue(igScripts.documentEndScript.contains("isProtectedUpsellContainer"))
+        XCTAssertTrue(igScripts.documentEndScript.contains("\"use the instagram app\""))
+        XCTAssertTrue(igScripts.documentEndScript.contains("\"usar o app\""))
+        XCTAssertTrue(igScripts.documentEndScript.contains("\"usar la app\""))
+
+        let ytScripts = composer.buildScripts(for: .youtube, config: config)
+        XCTAssertTrue(ytScripts.documentStartScript.contains("ytm-mealbar-promo-renderer"))
+        XCTAssertTrue(ytScripts.documentStartScript.contains("ytm-upsell-dialog-renderer"))
+        XCTAssertTrue(ytScripts.documentStartScript.contains("vnd.youtube://"))
+        XCTAssertTrue(ytScripts.documentEndScript.contains("hideAppUpsellBanners()"))
+        XCTAssertTrue(ytScripts.documentEndScript.contains("\"open in youtube\""))
+        XCTAssertTrue(ytScripts.documentEndScript.contains("\"abrir no app\""))
+        XCTAssertTrue(ytScripts.documentEndScript.contains("\"abrir en la app\""))
+    }
+
     func testFrictionLockStateLifecycle() {
         let start = Date(timeIntervalSince1970: 1_000_000)
         let config = FrictionLockConfig(isEnabled: true, holdDurationSeconds: 10, autoRelockMinutes: 15)

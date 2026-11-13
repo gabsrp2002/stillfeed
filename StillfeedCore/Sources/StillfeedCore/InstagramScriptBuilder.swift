@@ -5,6 +5,17 @@ public struct InstagramScriptBuilder: Sendable {
 
     public func build(config: InstagramFilterConfig) -> ScriptBundle {
         let configJSON = ScriptComposer.encodeJSON(config)
+        let upsellCSSSelectors = (AppUpsellScriptHelper.baseHiddenSelectors + [
+            #"a[href^="instagram://"]"#,
+            #"[role="dialog"]:has(a[href*="apps.apple.com"])"#,
+            #"[role="dialog"]:has(a[href^="instagram://"])"#
+        ]).joined(separator: ", ")
+        let upsellJS = AppUpsellScriptHelper.buildHideBannersJS(
+            appLinkSelector: #"a[href*="apps.apple.com"], a[href*="itunes.apple.com"], a[href^="instagram://"]"#,
+            dialogSelector: #"[role="dialog"]"#,
+            bannerSelector: #"div[style*="position: fixed"], div[style*="position:fixed"], header > div, section > div, aside"#,
+            extraGuardSelector: #"a[href="/direct/inbox/"], a[href="/notifications/"], header"#
+        )
 
         let startScript = """
         (function() {
@@ -19,8 +30,8 @@ public struct InstagramScriptBuilder: Sendable {
           function buildCSS(cfg) {
             var rules = [];
 
-            // Hide "Open in App" / "Get the app" banners and App Store links
-            rules.push('a[href*="apps.apple.com"], a[href*="itunes.apple.com"] { display: none !important; }');
+            // Hide "Open in App" / "Use the app" banners and App Store / native-scheme links
+            rules.push('\(upsellCSSSelectors) { display: none !important; }');
 
             if (cfg.blockReelsFeedAndTab) {
               rules.push('a[href="/reels/"], a[href^="/reels/"], a[href*="/reels?"] { display: none !important; }');
@@ -89,17 +100,7 @@ public struct InstagramScriptBuilder: Sendable {
             }
           }
 
-          function hideAppUpsellBanners() {
-            var buttons = document.querySelectorAll('a, button, div[role="button"]');
-            for (var i = 0; i < buttons.length; i++) {
-              var el = buttons[i];
-              var text = (el.textContent || '').trim().toLowerCase();
-              if (text === 'open app' || text === 'open in app' || text === 'use the app' || text === 'get the app') {
-                var banner = el.closest('div[style*="position: fixed"], header > div, section > div') || el;
-                banner.setAttribute('data-stillfeed-hidden', '1');
-              }
-            }
-          }
+        \(upsellJS)
 
           function hideReelsNavAndLinks(cfg) {
             if (!cfg.blockReelsFeedAndTab) return;

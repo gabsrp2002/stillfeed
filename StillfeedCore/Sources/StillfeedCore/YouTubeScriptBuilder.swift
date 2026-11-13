@@ -5,6 +5,24 @@ public struct YouTubeScriptBuilder: Sendable {
 
     public func build(config: YouTubeFilterConfig) -> ScriptBundle {
         let configJSON = ScriptComposer.encodeJSON(config)
+        let upsellCSSSelectors = (AppUpsellScriptHelper.baseHiddenSelectors + [
+            "ytm-mealbar-promo-renderer",
+            "ytm-upsell-dialog-renderer",
+            ".open-app-button",
+            #"a[href^="youtube://"]"#,
+            #"a[href^="vnd.youtube://"]"#,
+            #"a[href^="intent://"]"#,
+            "tp-yt-paper-dialog:has(ytm-upsell-dialog-renderer)",
+            "tp-yt-paper-dialog:has(ytm-mealbar-promo-renderer)",
+            #"tp-yt-paper-dialog:has(a[href*="apps.apple.com"])"#,
+            #"tp-yt-paper-dialog:has(a[href^="vnd.youtube://"])"#
+        ]).joined(separator: ", ")
+        let upsellJS = AppUpsellScriptHelper.buildHideBannersJS(
+            appLinkSelector: #"a[href*="apps.apple.com"], a[href*="itunes.apple.com"], a[href^="youtube://"], a[href^="vnd.youtube://"], a[href^="intent://"], .open-app-button"#,
+            dialogSelector: #"ytm-mealbar-promo-renderer, ytm-upsell-dialog-renderer, tp-yt-paper-dialog, [role="dialog"]"#,
+            bannerSelector: #"ytm-mealbar-promo-renderer, ytm-upsell-dialog-renderer, ytm-button-renderer, aside"#,
+            extraGuardSelector: #"ytm-mobile-topbar-renderer, ytm-pivot-bar-renderer, ytm-watch"#
+        )
 
         let startScript = """
         (function() {
@@ -19,8 +37,8 @@ public struct YouTubeScriptBuilder: Sendable {
           function buildCSS(cfg) {
             var rules = [];
 
-            // Hide "Open in YouTube" banners
-            rules.push('ytm-mealbar-promo-renderer { display: none !important; }');
+            // Hide "Open in YouTube" / "Use the app" banners and modals
+            rules.push('\(upsellCSSSelectors) { display: none !important; }');
 
             if (cfg.hideShortsEverywhere) {
               rules.push('ytm-reel-shelf-renderer, ytm-shorts-lockup-view-model { display: none !important; }');
@@ -101,7 +119,10 @@ public struct YouTubeScriptBuilder: Sendable {
             }
           }
 
+        \(upsellJS)
+
           function sweepShortsAndUpNext() {
+            hideAppUpsellBanners();
             var cfg = window.__stillfeedConfig || {};
 
             if (cfg.hideShortsEverywhere) {
