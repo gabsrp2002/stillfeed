@@ -21,18 +21,22 @@ public enum SocialPlatform: String, CaseIterable, Codable, Identifiable, Sendabl
     }
 
     public func entryURL(using config: StillfeedConfig) -> URL {
+        let base: URL
         switch self {
         case .instagram:
             if config.instagram.preferFollowingFeed {
-                return URL(string: "https://www.instagram.com/?variant=following")!
+                base = URL(string: "https://www.instagram.com/?variant=following")!
+            } else {
+                base = URL(string: "https://www.instagram.com/")!
             }
-            return URL(string: "https://www.instagram.com/")!
         case .youtube:
             if config.youtube.replaceHomeWithSubscriptions {
-                return URL(string: "https://m.youtube.com/feed/subscriptions")!
+                base = URL(string: "https://m.youtube.com/feed/subscriptions")!
+            } else {
+                base = URL(string: "https://m.youtube.com/")!
             }
-            return URL(string: "https://m.youtube.com/")!
         }
+        return applyingLanguageIfNeeded(to: base, config: config)
     }
 
     public var fallbackSafeURL: URL {
@@ -42,20 +46,44 @@ public enum SocialPlatform: String, CaseIterable, Codable, Identifiable, Sendabl
         }
     }
 
+    public func fallbackSafeURL(using config: StillfeedConfig) -> URL {
+        applyingLanguageIfNeeded(to: fallbackSafeURL, config: config)
+    }
+
+    public func applyingLanguageIfNeeded(to url: URL, config: StillfeedConfig) -> URL {
+        guard config.applyLanguageToPlatforms else { return url }
+        let lang = config.language.resolved()
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return url
+        }
+        var items = components.queryItems ?? []
+        items.removeAll { $0.name == "hl" || $0.name == "persist_hl" }
+        items.append(URLQueryItem(name: "hl", value: lang.webLocaleTag))
+        if self == .youtube {
+            items.append(URLQueryItem(name: "persist_hl", value: "1"))
+        }
+        components.queryItems = items
+        return components.url ?? url
+    }
+
     public var quickDestinations: [QuickDestination] {
+        quickDestinations(using: .english)
+    }
+
+    public func quickDestinations(using copy: AppCopy) -> [QuickDestination] {
         switch self {
         case .instagram:
             return [
-                QuickDestination(title: "Following Feed", systemImage: "person.2", url: URL(string: "https://www.instagram.com/?variant=following")!),
-                QuickDestination(title: "Direct Messages", systemImage: "paperplane", url: URL(string: "https://www.instagram.com/direct/inbox/")!),
-                QuickDestination(title: "Search", systemImage: "magnifyingglass", url: URL(string: "https://www.instagram.com/explore/")!),
-                QuickDestination(title: "Profile", systemImage: "person.crop.circle", url: URL(string: "https://www.instagram.com/accounts/edit/")!)
+                QuickDestination(title: copy.igFollowingFeed, systemImage: "person.2", url: URL(string: "https://www.instagram.com/?variant=following")!),
+                QuickDestination(title: copy.igDirectMessages, systemImage: "paperplane", url: URL(string: "https://www.instagram.com/direct/inbox/")!),
+                QuickDestination(title: copy.igSearch, systemImage: "magnifyingglass", url: URL(string: "https://www.instagram.com/explore/")!),
+                QuickDestination(title: copy.igProfile, systemImage: "person.crop.circle", url: URL(string: "https://www.instagram.com/accounts/edit/")!)
             ]
         case .youtube:
             return [
-                QuickDestination(title: "Subscriptions", systemImage: "rectangle.stack", url: URL(string: "https://m.youtube.com/feed/subscriptions")!),
-                QuickDestination(title: "Search", systemImage: "magnifyingglass", url: URL(string: "https://m.youtube.com/results")!),
-                QuickDestination(title: "Library", systemImage: "books.vertical", url: URL(string: "https://m.youtube.com/feed/library")!)
+                QuickDestination(title: copy.ytSubscriptions, systemImage: "rectangle.stack", url: URL(string: "https://m.youtube.com/feed/subscriptions")!),
+                QuickDestination(title: copy.ytSearch, systemImage: "magnifyingglass", url: URL(string: "https://m.youtube.com/results")!),
+                QuickDestination(title: copy.ytLibrary, systemImage: "books.vertical", url: URL(string: "https://m.youtube.com/feed/library")!)
             ]
         }
     }

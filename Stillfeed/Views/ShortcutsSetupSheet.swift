@@ -1,48 +1,52 @@
+import StillfeedCore
 import SwiftUI
 
 struct ShortcutsSetupSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
+    @Environment(FilterSettingsStore.self) private var store
 
     @State private var copiedTag: String?
 
     var body: some View {
+        let copy = store.copy
+
         NavigationStack {
             List {
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
-                        Label("Why a 1-time Shortcuts setup?", systemImage: "bolt.badge.checkmark")
+                        Label(copy.shortcutsWhyTitle, systemImage: "bolt.badge.checkmark")
                             .font(.headline)
                             .foregroundStyle(.teal)
-                        Text("Apple allows iCloud pop-ups only for regular Shortcuts—not Personal Automations that trigger when you open another app. Setting up a quick App Automation takes ~20 seconds and automatically bounces Instagram or YouTube into Stillfeed.")
+                        Text(copy.shortcutsWhyBody)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
                     .padding(.vertical, 4)
                 }
 
-                Section("3-Step Automation Setup") {
+                Section(copy.shortcutsStepsSectionTitle) {
                     stepRow(
                         number: "1",
-                        title: "Create an App Automation",
-                        detail: "Tap \"Open Shortcuts Automation\" below, choose App, pick Instagram (or YouTube), select Is Opened, and choose Run Immediately."
+                        title: copy.shortcutsStep1Title,
+                        detail: copy.shortcutsStep1Detail
                     )
                     stepRow(
                         number: "2",
-                        title: "Pick a Stillfeed Action",
-                        detail: "Tap Next → New Blank Automation → search \"Stillfeed\" and choose \"Open Instagram in Stillfeed\" (or \"Open YouTube in Stillfeed\")."
+                        title: copy.shortcutsStep2Title,
+                        detail: copy.shortcutsStep2Detail
                     )
                     stepRow(
                         number: "3",
-                        title: "Or Use a Deep Link URL",
-                        detail: "Alternatively, pick the \"Open URLs\" action in Shortcuts and paste one of the deep links below."
+                        title: copy.shortcutsStep3Title,
+                        detail: copy.shortcutsStep3Detail
                     )
                 }
 
-                Section("Deep Links") {
-                    deepLinkRow(title: "Instagram", urlString: "stillfeed://instagram")
-                    deepLinkRow(title: "YouTube", urlString: "stillfeed://youtube")
-                    deepLinkRow(title: "Any IG / YT Link", urlString: "stillfeed://open?url=...")
+                Section(copy.deepLinksSectionTitle) {
+                    deepLinkRow(title: SocialPlatform.instagram.displayName, urlString: "stillfeed://instagram", copy: copy)
+                    deepLinkRow(title: SocialPlatform.youtube.displayName, urlString: "stillfeed://youtube", copy: copy)
+                    deepLinkRow(title: copy.deepLinkAnyLabel, urlString: "stillfeed://open?url=...", copy: copy)
                 }
 
                 Section {
@@ -51,18 +55,18 @@ struct ShortcutsSetupSheet: View {
                             openURL(url)
                         }
                     } label: {
-                        Label("Open Shortcuts Automation", systemImage: "arrow.up.forward.app.fill")
+                        Label(copy.openShortcutsAutomationButton, systemImage: "arrow.up.forward.app.fill")
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                     }
                     .tint(.teal)
                 }
             }
-            .navigationTitle("Redirect Official Apps")
+            .navigationTitle(copy.shortcutsNavTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button(copy.doneButton) { dismiss() }
                 }
             }
         }
@@ -87,7 +91,7 @@ struct ShortcutsSetupSheet: View {
         .padding(.vertical, 2)
     }
 
-    private func deepLinkRow(title: String, urlString: String) -> some View {
+    private func deepLinkRow(title: String, urlString: String, copy: AppCopy) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
@@ -97,7 +101,7 @@ struct ShortcutsSetupSheet: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Button(copiedTag == urlString ? "Copied" : "Copy") {
+            Button(copiedTag == urlString ? copy.copiedButton : copy.copyButton) {
                 UIPasteboard.general.string = urlString
                 copiedTag = urlString
             }

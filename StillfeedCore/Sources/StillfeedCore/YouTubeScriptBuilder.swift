@@ -121,7 +121,7 @@ public struct YouTubeScriptBuilder: Sendable {
                 if (cfg.hideShortsEverywhere && label === 'shorts') {
                   pivotItems[j].setAttribute('data-stillfeed-hidden', '1');
                 }
-                if (cfg.replaceHomeWithSubscriptions && label === 'home') {
+                if (cfg.replaceHomeWithSubscriptions && (label === 'home' || label === 'início' || label === 'inicio' || label === 'principal')) {
                   pivotItems[j].setAttribute('data-stillfeed-hidden', '1');
                 }
               }

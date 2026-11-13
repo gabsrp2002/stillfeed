@@ -20,6 +20,7 @@ Guidance for AI coding agents working in the **Stillfeed** repository.
 3. **Preserve Auth & Session Flows:** Never redirect or block login, 2FA, consent, DM, or OAuth hosts/paths (`/accounts/`, `/direct/`, `/challenge/`, `facebook.com`, `meta.com`, `SocialPlatform.isGoogleHost(_:)`). Keep `ownsHost(_:)` accurate so in-platform auth flows do not pop open `SFSafariViewController`.
 4. **Backwards-Compatible Persistence:** When adding or modifying properties in `StillfeedConfig` (`FilterConfig.swift`), preserve backwards-compatible `Codable` decoding or handle migration in `FilterSettingsStore` so existing `UserDefaults` data does not reset unexpectedly.
 5. **Passive DOM Filtering:** Keep Stillfeed focused on removing algorithmic distractions (Reels, Shorts, Explore, Suggested posts, Up Next) via passive CSS/DOM rules and navigation policies—do not add ad/tracker blockers or automated UI clickers unless explicitly requested.
+6. **Onboarding New Languages:** All user-facing UI strings, navigation notices, and web locale tags live in `StillfeedCore/Sources/StillfeedCore/Localization.swift` (`ConcreteLanguage`, `AppLanguage`, and `AppCopy`). Add a new language by adding enum cases there and filling in the compiler-checked `AppCopy` catalog entry (plus any localized DOM labels in `InstagramScriptBuilder` / `YouTubeScriptBuilder` if needed).
 
 ## Verification Commands
 

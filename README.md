@@ -24,6 +24,7 @@
 - **Clean Launcher Home:** Deliberately choose between Instagram, YouTube, or Settings—no cross-platform tab bar bouncing.
 - **Settings Friction Lock:** Enabling filters is instant; weakening or disabling protections requires a continuous press-and-hold (default 10s) with an optional auto re-lock timer.
 - **Deep Links & Shortcuts (`AppIntents`):** Supports `stillfeed://instagram`, `stillfeed://youtube`, `stillfeed://open?url=<encoded_url>`, and native **Shortcuts** actions (*Open Instagram in Stillfeed* / *Open YouTube in Stillfeed*) so you can auto-redirect reflexive taps on the official apps.
+- **Multi-Language Support:** Built-in English, Portuguese, and Spanish translations with an option in Settings to apply your chosen language to Instagram and YouTube mobile web.
 
 ---
 
@@ -38,6 +39,7 @@
 │   │   ├── FilterConfig.swift     # Codable filter & friction lock configuration
 │   │   ├── NavigationPolicyEngine.swift  # URL routing, scheme blocking, /shorts/ redirects
 │   │   ├── DeepLinkParser.swift   # stillfeed:// URL parser
+│   │   ├── Localization.swift     # Typed translations (EN/PT/ES) + platform locale helpers
 │   │   ├── FrictionLockState.swift
 │   │   ├── ScriptComposer.swift
 │   │   ├── InstagramScriptBuilder.swift

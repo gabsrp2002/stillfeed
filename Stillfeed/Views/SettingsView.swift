@@ -13,21 +13,23 @@ struct SettingsView: View {
 
     var body: some View {
         @Bindable var store = store
+        let copy = store.copy
 
         NavigationStack {
             Form {
-                frictionStatusSection
-                instagramSection
-                youtubeSection
-                frictionConfigSection
-                automationSection
-                sessionManagementSection
+                frictionStatusSection(copy)
+                languageSection(copy)
+                instagramSection(copy)
+                youtubeSection(copy)
+                frictionConfigSection(copy)
+                automationSection(copy)
+                sessionManagementSection(copy)
             }
-            .navigationTitle("Settings")
+            .navigationTitle(copy.settingsTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button(copy.doneButton) { dismiss() }
                 }
             }
             .sheet(isPresented: $showingFrictionSheet) {
@@ -43,26 +45,26 @@ struct SettingsView: View {
                 ShortcutsSetupSheet()
             }
             .alert(
-                "Clear \(platformPendingClear?.displayName ?? "") Session?",
+                copy.clearSessionAlertTitleFormat(platformPendingClear?.displayName ?? ""),
                 isPresented: Binding(
                     get: { platformPendingClear != nil },
                     set: { if !$0 { platformPendingClear = nil } }
                 )
             ) {
-                Button("Log Out & Clear Cookies", role: .destructive) {
+                Button(copy.clearSessionAlertAction, role: .destructive) {
                     if let target = platformPendingClear {
                         Task {
                             await SessionStorageCleaner.clearCookies(for: target)
-                            statusBanner = "Cleared \(target.displayName) session."
+                            statusBanner = copy.clearedSessionBannerFormat(target.displayName)
                         }
                     }
                     platformPendingClear = nil
                 }
-                Button("Cancel", role: .cancel) {
+                Button(copy.cancelButton, role: .cancel) {
                     platformPendingClear = nil
                 }
             } message: {
-                Text("You will need to sign in again the next time you open this platform.")
+                Text(copy.clearSessionAlertMessage)
             }
         }
         .onAppear {
@@ -70,32 +72,32 @@ struct SettingsView: View {
         }
     }
 
-    private var frictionStatusSection: some View {
+    private func frictionStatusSection(_ copy: AppCopy) -> some View {
         Section {
             HStack(spacing: 12) {
                 Image(systemName: store.isLocked ? "lock.shield.fill" : "lock.open.fill")
                     .font(.title3)
                     .foregroundStyle(store.isLocked ? .teal : .orange)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(store.isLocked ? "Friction Lock Active" : "Filters Temporarily Unlocked")
+                    Text(store.isLocked ? copy.frictionActiveTitle : copy.frictionUnlockedTitle)
                         .font(.subheadline.weight(.semibold))
                     if store.isLocked {
-                        Text("Turning protections off requires a \(store.config.frictionLock.holdDurationSeconds)s hold.")
+                        Text(copy.frictionHoldSubtitleFormat(store.config.frictionLock.holdDurationSeconds))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else if let remaining = store.remainingUnlockSeconds {
-                        Text("Auto-locks in \(max(1, remaining / 60)) min")
+                        Text(copy.frictionAutoLocksFormat(max(1, remaining / 60)))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else {
-                        Text("You can adjust protections freely.")
+                        Text(copy.frictionAdjustFreely)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                 }
                 Spacer()
                 if !store.isLocked && store.config.frictionLock.isEnabled {
-                    Button("Lock Now") {
+                    Button(copy.lockNowButton) {
                         store.relockNow()
                     }
                     .font(.caption.weight(.semibold))
@@ -112,71 +114,87 @@ struct SettingsView: View {
         }
     }
 
-    private var instagramSection: some View {
-        Section("Instagram") {
+    private func languageSection(_ copy: AppCopy) -> some View {
+        @Bindable var store = store
+        return Section {
+            Picker(copy.appLanguageLabel, selection: $store.config.language) {
+                ForEach(AppLanguage.allCases) { lang in
+                    Text(lang.label(using: copy)).tag(lang)
+                }
+            }
+            Toggle(copy.applyLanguageToPlatformsLabel, isOn: $store.config.applyLanguageToPlatforms)
+        } header: {
+            Text(copy.languageSectionTitle)
+        } footer: {
+            Text(copy.applyLanguageToPlatformsFooter)
+        }
+    }
+
+    private func instagramSection(_ copy: AppCopy) -> some View {
+        Section(copy.igSectionTitle) {
             Toggle(
-                "Block Reels Feed & Tab",
+                copy.igBlockReels,
                 isOn: store.protectionBinding(for: \.instagram.blockReelsFeedAndTab, onRequireUnlock: requestUnlock)
             )
             if store.config.instagram.blockReelsFeedAndTab {
                 Toggle(
-                    "Allow Single Reel from DMs",
+                    copy.igAllowSingleReelFromDM,
                     isOn: store.relaxableBinding(for: \.instagram.allowSingleReelFromDM, onRequireUnlock: requestUnlock)
                 )
             }
             Toggle(
-                "Block Explore Grid (Keep Search)",
+                copy.igBlockExploreKeepSearch,
                 isOn: store.protectionBinding(for: \.instagram.blockExploreGridKeepSearch, onRequireUnlock: requestUnlock)
             )
             Toggle(
-                "Hide Suggested Posts",
+                copy.igHideSuggestedPosts,
                 isOn: store.protectionBinding(for: \.instagram.hideSuggestedAndSponsored, onRequireUnlock: requestUnlock)
             )
             Toggle(
-                "Force Following-Only Feed (Hides Stories)",
+                copy.igForceFollowingOnly,
                 isOn: store.protectionBinding(for: \.instagram.preferFollowingFeed, onRequireUnlock: requestUnlock)
             )
             Toggle(
-                "Hide Stories Tray",
+                copy.igHideStoriesTray,
                 isOn: store.protectionBinding(for: \.instagram.hideStoriesTray, onRequireUnlock: requestUnlock)
             )
         }
     }
 
-    private var youtubeSection: some View {
-        Section("YouTube") {
+    private func youtubeSection(_ copy: AppCopy) -> some View {
+        Section(copy.ytSectionTitle) {
             Toggle(
-                "Hide Shorts Everywhere",
+                copy.ytHideShorts,
                 isOn: store.protectionBinding(for: \.youtube.hideShortsEverywhere, onRequireUnlock: requestUnlock)
             )
             Toggle(
-                "Open /shorts/ in Normal Player",
+                copy.ytOpenShortsInNormalPlayer,
                 isOn: store.protectionBinding(for: \.youtube.redirectShortsToWatchPlayer, onRequireUnlock: requestUnlock)
             )
             Toggle(
-                "Replace Home with Subscriptions",
+                copy.ytReplaceHomeWithSubscriptions,
                 isOn: store.protectionBinding(for: \.youtube.replaceHomeWithSubscriptions, onRequireUnlock: requestUnlock)
             )
             Toggle(
-                "Hide \"Up Next\" Recommendations",
+                copy.ytHideUpNext,
                 isOn: store.protectionBinding(for: \.youtube.hideUpNextRecommendations, onRequireUnlock: requestUnlock)
             )
             Toggle(
-                "Hide Video Comments",
+                copy.ytHideComments,
                 isOn: store.protectionBinding(for: \.youtube.hideComments, onRequireUnlock: requestUnlock)
             )
         }
     }
 
-    private var frictionConfigSection: some View {
-        Section("Friction Lock Settings") {
+    private func frictionConfigSection(_ copy: AppCopy) -> some View {
+        Section(copy.frictionSettingsSectionTitle) {
             Toggle(
-                "Require Hold to Disable Filters",
+                copy.requireHoldToDisable,
                 isOn: store.protectionBinding(for: \.frictionLock.isEnabled, onRequireUnlock: requestUnlock)
             )
 
             Picker(
-                "Hold Duration",
+                copy.holdDurationLabel,
                 selection: Binding(
                     get: { store.config.frictionLock.holdDurationSeconds },
                     set: { newVal in
@@ -190,13 +208,13 @@ struct SettingsView: View {
                     }
                 )
             ) {
-                Text("5 seconds").tag(5)
-                Text("10 seconds").tag(10)
-                Text("20 seconds").tag(20)
+                Text(copy.secondsOptionFormat(5)).tag(5)
+                Text(copy.secondsOptionFormat(10)).tag(10)
+                Text(copy.secondsOptionFormat(20)).tag(20)
             }
 
             Picker(
-                "Auto Re-Lock After",
+                copy.autoRelockAfterLabel,
                 selection: Binding(
                     get: { store.config.frictionLock.autoRelockMinutes ?? 0 },
                     set: { newVal in
@@ -211,30 +229,30 @@ struct SettingsView: View {
                     }
                 )
             ) {
-                Text("5 minutes").tag(5)
-                Text("15 minutes").tag(15)
-                Text("30 minutes").tag(30)
-                Text("Manual only").tag(0)
+                Text(copy.minutesOptionFormat(5)).tag(5)
+                Text(copy.minutesOptionFormat(15)).tag(15)
+                Text(copy.minutesOptionFormat(30)).tag(30)
+                Text(copy.manualOnlyOption).tag(0)
             }
         }
     }
 
-    private var automationSection: some View {
-        Section("App Redirects & Deep Links") {
+    private func automationSection(_ copy: AppCopy) -> some View {
+        Section(copy.appRedirectsSectionTitle) {
             Button {
                 showingShortcutsSetup = true
             } label: {
-                Label("Redirect Official Apps via Shortcuts", systemImage: "bolt.badge.checkmark")
+                Label(copy.redirectOfficialAppsButton, systemImage: "bolt.badge.checkmark")
             }
         }
     }
 
-    private var sessionManagementSection: some View {
-        Section("Sessions") {
-            Button("Clear Instagram Session", role: .destructive) {
+    private func sessionManagementSection(_ copy: AppCopy) -> some View {
+        Section(copy.sessionsSectionTitle) {
+            Button(copy.clearInstagramSession, role: .destructive) {
                 platformPendingClear = .instagram
             }
-            Button("Clear YouTube Session", role: .destructive) {
+            Button(copy.clearYouTubeSession, role: .destructive) {
                 platformPendingClear = .youtube
             }
         }

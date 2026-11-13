@@ -36,6 +36,10 @@ public final class FilterSettingsStore {
         }
     }
 
+    public var copy: AppCopy {
+        AppCopy.forLanguage(config.language)
+    }
+
     public var isLocked: Bool {
         frictionState.isLocked(config: config.frictionLock, now: now)
     }

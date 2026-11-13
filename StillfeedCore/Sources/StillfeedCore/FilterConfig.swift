@@ -4,15 +4,30 @@ public struct StillfeedConfig: Codable, Equatable, Sendable {
     public var instagram: InstagramFilterConfig
     public var youtube: YouTubeFilterConfig
     public var frictionLock: FrictionLockConfig
+    public var language: AppLanguage
+    public var applyLanguageToPlatforms: Bool
 
     public init(
         instagram: InstagramFilterConfig = InstagramFilterConfig(),
         youtube: YouTubeFilterConfig = YouTubeFilterConfig(),
-        frictionLock: FrictionLockConfig = FrictionLockConfig()
+        frictionLock: FrictionLockConfig = FrictionLockConfig(),
+        language: AppLanguage = .system,
+        applyLanguageToPlatforms: Bool = false
     ) {
         self.instagram = instagram
         self.youtube = youtube
         self.frictionLock = frictionLock
+        self.language = language
+        self.applyLanguageToPlatforms = applyLanguageToPlatforms
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.instagram = try container.decodeIfPresent(InstagramFilterConfig.self, forKey: .instagram) ?? InstagramFilterConfig()
+        self.youtube = try container.decodeIfPresent(YouTubeFilterConfig.self, forKey: .youtube) ?? YouTubeFilterConfig()
+        self.frictionLock = try container.decodeIfPresent(FrictionLockConfig.self, forKey: .frictionLock) ?? FrictionLockConfig()
+        self.language = try container.decodeIfPresent(AppLanguage.self, forKey: .language) ?? .system
+        self.applyLanguageToPlatforms = try container.decodeIfPresent(Bool.self, forKey: .applyLanguageToPlatforms) ?? false
     }
 
     public var totalActiveProtections: Int {
@@ -61,17 +76,21 @@ public struct InstagramFilterConfig: Codable, Equatable, Sendable {
     }
 
     public var summaryText: String {
+        summaryText(using: .english)
+    }
+
+    public func summaryText(using copy: AppCopy) -> String {
         var parts: [String] = []
         if blockReelsFeedAndTab {
-            parts.append(allowSingleReelFromDM ? "DM-Safe Reels" : "No Reels")
+            parts.append(allowSingleReelFromDM ? copy.summaryDMSafeReels : copy.summaryNoReels)
         }
         if blockExploreGridKeepSearch {
-            parts.append("No Explore")
+            parts.append(copy.summaryNoExplore)
         }
         if hideSuggestedAndSponsored || preferFollowingFeed {
-            parts.append("Clean Feed")
+            parts.append(copy.summaryCleanFeed)
         }
-        return parts.isEmpty ? "Filters Paused" : parts.joined(separator: " • ")
+        return parts.isEmpty ? copy.summaryFiltersPaused : parts.joined(separator: " • ")
     }
 }
 
@@ -112,17 +131,21 @@ public struct YouTubeFilterConfig: Codable, Equatable, Sendable {
     }
 
     public var summaryText: String {
+        summaryText(using: .english)
+    }
+
+    public func summaryText(using copy: AppCopy) -> String {
         var parts: [String] = []
         if replaceHomeWithSubscriptions {
-            parts.append("Subscriptions & Search")
+            parts.append(copy.summarySubscriptionsAndSearch)
         }
         if hideShortsEverywhere || redirectShortsToWatchPlayer {
-            parts.append("No Shorts")
+            parts.append(copy.summaryNoShorts)
         }
         if hideUpNextRecommendations {
-            parts.append("No Up Next")
+            parts.append(copy.summaryNoUpNext)
         }
-        return parts.isEmpty ? "Filters Paused" : parts.joined(separator: " • ")
+        return parts.isEmpty ? copy.summaryFiltersPaused : parts.joined(separator: " • ")
     }
 }
 

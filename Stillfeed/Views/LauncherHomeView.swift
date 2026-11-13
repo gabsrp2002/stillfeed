@@ -31,7 +31,7 @@ struct LauncherHomeView: View {
                         Image(systemName: "slider.horizontal.3")
                             .fontWeight(.medium)
                     }
-                    .accessibilityLabel("Filter Settings")
+                    .accessibilityLabel(store.copy.filterSettingsAccessibility)
                 }
             }
             .sheet(isPresented: $showingSettings) {
@@ -64,17 +64,17 @@ struct LauncherHomeView: View {
                     .font(.largeTitle.bold())
             }
 
-            Text("Intentional social browsing with short-form video traps and algorithmic suggestions removed.")
+            Text(store.copy.launcherTagline)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
             HStack(spacing: 8) {
                 Image(systemName: store.isLocked ? "lock.shield.fill" : "lock.open.fill")
                     .foregroundStyle(store.isLocked ? .teal : .orange)
-                Text("\(store.config.totalActiveProtections) protections active")
+                Text(store.copy.protectionsActiveFormat(store.config.totalActiveProtections))
                     .font(.footnote.weight(.medium))
                 if !store.isLocked, store.config.frictionLock.isEnabled {
-                    Text("• Unlocked")
+                    Text(store.copy.unlockedBadge)
                         .font(.footnote.weight(.medium))
                         .foregroundStyle(.orange)
                 }
@@ -89,7 +89,7 @@ struct LauncherHomeView: View {
         VStack(spacing: 14) {
             PlatformLaunchCard(
                 platform: .instagram,
-                subtitle: store.config.instagram.summaryText,
+                subtitle: store.config.instagram.summaryText(using: store.copy),
                 accentColor: .pink
             ) {
                 router.open(.instagram)
@@ -97,7 +97,7 @@ struct LauncherHomeView: View {
 
             PlatformLaunchCard(
                 platform: .youtube,
-                subtitle: store.config.youtube.summaryText,
+                subtitle: store.config.youtube.summaryText(using: store.copy),
                 accentColor: .red
             ) {
                 router.open(.youtube)
@@ -114,10 +114,10 @@ struct LauncherHomeView: View {
                     .font(.title3)
                     .foregroundStyle(.teal)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Redirect Official Instagram & YouTube Apps")
+                    Text(store.copy.redirectOfficialAppsTitle)
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.primary)
-                    Text("Set up a 20-second iOS Shortcuts automation so tapping the normal apps opens Stillfeed instead.")
+                    Text(store.copy.redirectOfficialAppsSubtitle)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.leading)

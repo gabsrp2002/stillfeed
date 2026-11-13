@@ -65,19 +65,23 @@ public struct NavigationPolicyEngine: Sendable {
             return .openExternally(url)
         }
 
+        let copy = AppCopy.forLanguage(config.language)
+
         switch platform {
         case .instagram:
-            return evaluateInstagram(url: url, host: host, config: config.instagram)
+            return evaluateInstagram(url: url, host: host, config: config, copy: copy)
         case .youtube:
-            return evaluateYouTube(url: url, host: host, config: config.youtube)
+            return evaluateYouTube(url: url, host: host, config: config, copy: copy)
         }
     }
 
     private func evaluateInstagram(
         url: URL,
         host: String,
-        config: InstagramFilterConfig
+        config: StillfeedConfig,
+        copy: AppCopy
     ) -> NavigationDecision {
+        let igConfig = config.instagram
         // Leave Facebook OAuth/login bridges untouched.
         if host.contains("facebook.com") {
             return .allow
@@ -100,22 +104,22 @@ public struct NavigationPolicyEngine: Sendable {
         }
 
         // Plural /reels/ is the infinite vertical Reels feed.
-        if config.blockReelsFeedAndTab && (path == "/reels" || path.hasPrefix("/reels/")) {
-            let fallback = SocialPlatform.instagram.fallbackSafeURL
-            return .blockWithFallback(fallback, reason: "Blocked Reels feed")
+        if igConfig.blockReelsFeedAndTab && (path == "/reels" || path.hasPrefix("/reels/")) {
+            let fallback = SocialPlatform.instagram.fallbackSafeURL(using: config)
+            return .blockWithFallback(fallback, reason: copy.noticeBlockedReelsFeed)
         }
 
         // Singular /reel/<id> can be opened from DMs when allowSingleReelFromDM is enabled.
         if path == "/reel" || path.hasPrefix("/reel/") {
-            if config.blockReelsFeedAndTab && !config.allowSingleReelFromDM {
-                let fallback = SocialPlatform.instagram.fallbackSafeURL
-                return .blockWithFallback(fallback, reason: "Blocked Reel")
+            if igConfig.blockReelsFeedAndTab && !igConfig.allowSingleReelFromDM {
+                let fallback = SocialPlatform.instagram.fallbackSafeURL(using: config)
+                return .blockWithFallback(fallback, reason: copy.noticeBlockedReel)
             }
             return .allow
         }
 
         // Prefer Following feed when landing on bare root "/".
-        if config.preferFollowingFeed && path == "/" {
+        if igConfig.preferFollowingFeed && path == "/" {
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
             let variant = components?.queryItems?.first(where: { $0.name == "variant" })?.value
             if variant != "following" {
@@ -136,8 +140,10 @@ public struct NavigationPolicyEngine: Sendable {
     private func evaluateYouTube(
         url: URL,
         host: String,
-        config: YouTubeFilterConfig
+        config: StillfeedConfig,
+        copy: AppCopy
     ) -> NavigationDecision {
+        let ytConfig = config.youtube
         // Leave Google/YouTube auth & consent hosts untouched.
         if SocialPlatform.isGoogleHost(host) || host.hasPrefix("accounts.") || host.hasPrefix("consent.") {
             return .allow
@@ -146,11 +152,11 @@ public struct NavigationPolicyEngine: Sendable {
         let path = normalizedPath(from: url)
 
         // Block /feed/shorts or bare /shorts directory.
-        if (config.hideShortsEverywhere || config.redirectShortsToWatchPlayer) &&
+        if (ytConfig.hideShortsEverywhere || ytConfig.redirectShortsToWatchPlayer) &&
             (path == "/feed/shorts" || path == "/shorts") {
             return .blockWithFallback(
-                SocialPlatform.youtube.fallbackSafeURL,
-                reason: "Blocked Shorts feed"
+                SocialPlatform.youtube.fallbackSafeURL(using: config),
+                reason: copy.noticeBlockedShortsFeed
             )
         }
 
@@ -162,7 +168,7 @@ public struct NavigationPolicyEngine: Sendable {
                 .map(String.init) ?? ""
 
             if !videoId.isEmpty {
-                if config.redirectShortsToWatchPlayer {
+                if ytConfig.redirectShortsToWatchPlayer {
                     var components = URLComponents()
                     components.scheme = "https"
                     components.host = "m.youtube.com"
@@ -174,24 +180,25 @@ public struct NavigationPolicyEngine: Sendable {
                     }
                     components.queryItems = queryItems
                     if let target = components.url {
-                        return .redirect(target, notice: "Opened Short in standard player")
+                        let localizedTarget = SocialPlatform.youtube.applyingLanguageIfNeeded(to: target, config: config)
+                        return .redirect(localizedTarget, notice: copy.noticeOpenedShortInPlayer)
                     }
-                } else if config.hideShortsEverywhere {
+                } else if ytConfig.hideShortsEverywhere {
                     return .blockWithFallback(
-                        SocialPlatform.youtube.fallbackSafeURL,
-                        reason: "Blocked Short"
+                        SocialPlatform.youtube.fallbackSafeURL(using: config),
+                        reason: copy.noticeBlockedShort
                     )
                 }
             }
         }
 
         // Redirect Home ("/") to Subscriptions unless it's a watch/search URL with query args.
-        if config.replaceHomeWithSubscriptions && path == "/" {
+        if ytConfig.replaceHomeWithSubscriptions && path == "/" {
             let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
             let hasContentQuery = queryItems.contains { $0.name == "v" || $0.name == "search_query" || $0.name == "list" }
             if !hasContentQuery {
                 return .redirect(
-                    SocialPlatform.youtube.fallbackSafeURL,
+                    SocialPlatform.youtube.fallbackSafeURL(using: config),
                     notice: nil
                 )
             }

@@ -25,7 +25,8 @@ final class NavigationPolicyEngineTests: XCTestCase {
     }
 
     func testYouTubeShortsRedirectsToStandardWatchPlayerAndIsIdempotent() {
-        let config = StillfeedConfig()
+        var config = StillfeedConfig()
+        config.language = .english
         let shortsURL = URL(string: "https://m.youtube.com/shorts/dQw4w9WgXcQ?t=12&feature=share")!
 
         let decision = engine.evaluate(url: shortsURL, platform: .youtube, config: config)
@@ -47,6 +48,7 @@ final class NavigationPolicyEngineTests: XCTestCase {
 
     func testYouTubeShortsBlockedWhenRedirectDisabled() {
         var config = StillfeedConfig()
+        config.language = .english
         config.youtube.redirectShortsToWatchPlayer = false
         config.youtube.hideShortsEverywhere = true
 
@@ -112,7 +114,8 @@ final class NavigationPolicyEngineTests: XCTestCase {
     }
 
     func testInstagramBlocksReelsFeedButAllowsSingleReelFromDM() {
-        let config = StillfeedConfig()
+        var config = StillfeedConfig()
+        config.language = .english
 
         let reelsFeed = engine.evaluate(
             url: URL(string: "https://www.instagram.com/reels/")!,

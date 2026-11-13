@@ -2,6 +2,7 @@ import SwiftUI
 
 struct FrictionChallengeSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(FilterSettingsStore.self) private var store
 
     let holdDurationSeconds: Int
     let onUnlocked: () -> Void
@@ -20,6 +21,8 @@ struct FrictionChallengeSheet: View {
     }
 
     var body: some View {
+        let copy = store.copy
+
         NavigationStack {
             VStack(spacing: 28) {
                 Spacer()
@@ -29,10 +32,10 @@ struct FrictionChallengeSheet: View {
                         .font(.system(size: 40))
                         .foregroundStyle(.teal)
 
-                    Text("Take a Breath")
+                    Text(copy.frictionChallengeTitle)
                         .font(.title2.bold())
 
-                    Text("To weaken or disable filters, press and hold the button below continuously for \(holdDurationSeconds) seconds.")
+                    Text(copy.frictionChallengePromptFormat(holdDurationSeconds))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
@@ -55,9 +58,9 @@ struct FrictionChallengeSheet: View {
                         .animation(.linear(duration: 0.05), value: progress)
 
                     VStack(spacing: 4) {
-                        Text(isHolding ? "\(remainingSeconds)s" : "Hold")
+                        Text(isHolding ? "\(remainingSeconds)s" : copy.holdButtonTitle)
                             .font(.title.monospacedDigit().bold())
-                        Text(isHolding ? "Keep holding" : "Press & hold")
+                        Text(isHolding ? copy.keepHoldingSubtitle : copy.pressAndHoldSubtitle)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -77,7 +80,7 @@ struct FrictionChallengeSheet: View {
 
                 Spacer()
 
-                Button("Keep Filters Active") {
+                Button(copy.keepFiltersActiveButton) {
                     cancelHold()
                     dismiss()
                 }
@@ -86,11 +89,11 @@ struct FrictionChallengeSheet: View {
                 .padding(.bottom, 16)
             }
             .padding()
-            .navigationTitle("Friction Lock")
+            .navigationTitle(copy.frictionChallengeNavTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button(copy.cancelButton) {
                         cancelHold()
                         dismiss()
                     }

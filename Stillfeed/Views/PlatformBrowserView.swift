@@ -21,6 +21,7 @@ struct PlatformBrowserView: View {
                     config: store.config,
                     controller: controller
                 )
+                .id("\(platform.rawValue)-\(store.config.language.rawValue)-\(store.config.applyLanguageToPlatforms)")
                 .ignoresSafeArea(.container, edges: .bottom)
 
                 if let notice = controller.noticeMessage {
@@ -47,7 +48,7 @@ struct PlatformBrowserView: View {
                 Image(systemName: "house")
                     .font(.body.weight(.semibold))
             }
-            .accessibilityLabel("Back to Stillfeed Home")
+            .accessibilityLabel(store.copy.backToHomeAccessibility)
 
             Button {
                 controller.goBack()
@@ -86,9 +87,9 @@ struct PlatformBrowserView: View {
             Spacer()
 
             Menu {
-                ForEach(platform.quickDestinations) { destination in
+                ForEach(platform.quickDestinations(using: store.copy)) { destination in
                     Button {
-                        controller.load(url: destination.url)
+                        controller.load(url: destination.url, config: store.config, platform: platform)
                     } label: {
                         Label(destination.title, systemImage: destination.systemImage)
                     }
@@ -97,7 +98,7 @@ struct PlatformBrowserView: View {
                 Image(systemName: "safari")
                     .font(.body.weight(.medium))
             }
-            .accessibilityLabel("Quick Destinations")
+            .accessibilityLabel(store.copy.quickDestinationsAccessibility)
 
             Button {
                 controller.reload()
@@ -105,7 +106,7 @@ struct PlatformBrowserView: View {
                 Image(systemName: "arrow.clockwise")
                     .font(.body.weight(.medium))
             }
-            .accessibilityLabel("Reload")
+            .accessibilityLabel(store.copy.reloadAccessibility)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)

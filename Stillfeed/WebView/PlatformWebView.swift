@@ -29,8 +29,12 @@ final class WebBrowserController {
         webView?.reload()
     }
 
-    func load(url: URL) {
-        webView?.load(URLRequest(url: url))
+    func load(url: URL, config: StillfeedConfig? = nil, platform: SocialPlatform? = nil) {
+        var resolvedURL = url
+        if let config, let platform {
+            resolvedURL = platform.applyingLanguageIfNeeded(to: url, config: config)
+        }
+        webView?.load(PlatformWebView.makeRequest(for: resolvedURL, config: config))
     }
 
     func pushUpdatedConfig(_ config: StillfeedConfig, platform: SocialPlatform) {
@@ -61,6 +65,14 @@ struct PlatformWebView: UIViewRepresentable {
 
     private static let safariCompatibleMobileUserAgent =
         "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1"
+
+    static func makeRequest(for url: URL, config: StillfeedConfig?) -> URLRequest {
+        var request = URLRequest(url: url)
+        if let config, config.applyLanguageToPlatforms {
+            request.setValue(config.language.resolved().acceptLanguageHeader, forHTTPHeaderField: "Accept-Language")
+        }
+        return request
+    }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(platform: platform, config: config, controller: controller)
@@ -101,8 +113,9 @@ struct PlatformWebView: UIViewRepresentable {
         context.coordinator.attachObservers(to: webView)
         controller.webView = webView
 
-        let startURL = initialURL ?? platform.entryURL(using: config)
-        webView.load(URLRequest(url: startURL))
+        let rawStartURL = initialURL ?? platform.entryURL(using: config)
+        let startURL = platform.applyingLanguageIfNeeded(to: rawStartURL, config: config)
+        webView.load(Self.makeRequest(for: startURL, config: config))
         return webView
     }
 
@@ -164,12 +177,12 @@ struct PlatformWebView: UIViewRepresentable {
             case let .redirect(targetURL, notice):
                 if targetURL != url {
                     if let notice { controller.showNotice(notice) }
-                    webView.load(URLRequest(url: targetURL))
+                    webView.load(PlatformWebView.makeRequest(for: targetURL, config: config))
                 }
             case let .blockWithFallback(fallbackURL, reason):
                 controller.showNotice(reason)
                 if fallbackURL != url {
-                    webView.load(URLRequest(url: fallbackURL))
+                    webView.load(PlatformWebView.makeRequest(for: fallbackURL, config: config))
                 }
             }
         }
@@ -208,12 +221,12 @@ struct PlatformWebView: UIViewRepresentable {
                 if let notice {
                     controller.showNotice(notice)
                 }
-                webView.load(URLRequest(url: targetURL))
+                webView.load(PlatformWebView.makeRequest(for: targetURL, config: config))
 
             case let .blockWithFallback(fallbackURL, reason):
                 decisionHandler(.cancel)
                 controller.showNotice(reason)
-                webView.load(URLRequest(url: fallbackURL))
+                webView.load(PlatformWebView.makeRequest(for: fallbackURL, config: config))
             }
         }
 
@@ -228,13 +241,13 @@ struct PlatformWebView: UIViewRepresentable {
                 let decision = policyEngine.evaluate(url: url, platform: platform, config: config, isMainFrame: true)
                 switch decision {
                 case .allow:
-                    webView.load(URLRequest(url: url))
+                    webView.load(PlatformWebView.makeRequest(for: url, config: config))
                 case let .redirect(target, notice):
                     if let notice { controller.showNotice(notice) }
-                    webView.load(URLRequest(url: target))
+                    webView.load(PlatformWebView.makeRequest(for: target, config: config))
                 case let .blockWithFallback(fallback, reason):
                     controller.showNotice(reason)
-                    webView.load(URLRequest(url: fallback))
+                    webView.load(PlatformWebView.makeRequest(for: fallback, config: config))
                 case let .openExternally(externalURL):
                     controller.externalURL = IdentifiableURL(url: externalURL)
                 case .cancelAppScheme:
