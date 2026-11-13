@@ -1,0 +1,452 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		SF000101 /* StillfeedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = SF000001 /* StillfeedApp.swift */; };
+		SF000102 /* FilterSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = SF000002 /* FilterSettingsStore.swift */; };
+		SF000103 /* LauncherHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SF000003 /* LauncherHomeView.swift */; };
+		SF000104 /* PlatformBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SF000004 /* PlatformBrowserView.swift */; };
+		SF000105 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SF000005 /* SettingsView.swift */; };
+		SF000106 /* FrictionChallengeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = SF000006 /* FrictionChallengeSheet.swift */; };
+		SF000107 /* PlatformWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SF000007 /* PlatformWebView.swift */; };
+		SF000108 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SF000008 /* SafariView.swift */; };
+		SF000109 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = SF000009 /* Assets.xcassets */; };
+		SF000110 /* StillfeedCore in Frameworks */ = {isa = PBXBuildFile; productRef = SF000302 /* StillfeedCore */; };
+		SF000111 /* DeepLinkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = SF000010 /* DeepLinkRouter.swift */; };
+		SF000112 /* StillfeedShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = SF000011 /* StillfeedShortcuts.swift */; };
+		SF000113 /* ShortcutsSetupSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = SF000012 /* ShortcutsSetupSheet.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		SF000000 /* Stillfeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stillfeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		SF000001 /* StillfeedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillfeedApp.swift; sourceTree = "<group>"; };
+		SF000002 /* FilterSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSettingsStore.swift; sourceTree = "<group>"; };
+		SF000003 /* LauncherHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherHomeView.swift; sourceTree = "<group>"; };
+		SF000004 /* PlatformBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformBrowserView.swift; sourceTree = "<group>"; };
+		SF000005 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		SF000006 /* FrictionChallengeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrictionChallengeSheet.swift; sourceTree = "<group>"; };
+		SF000007 /* PlatformWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformWebView.swift; sourceTree = "<group>"; };
+		SF000008 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
+		SF000009 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		SF000010 /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkRouter.swift; sourceTree = "<group>"; };
+		SF000011 /* StillfeedShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillfeedShortcuts.swift; sourceTree = "<group>"; };
+		SF000012 /* ShortcutsSetupSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsSetupSheet.swift; sourceTree = "<group>"; };
+		SF000013 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		SF000202 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				SF000110 /* StillfeedCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		SF000400 = {
+			isa = PBXGroup;
+			children = (
+				SF000401 /* Stillfeed */,
+				SF000499 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		SF000401 /* Stillfeed */ = {
+			isa = PBXGroup;
+			children = (
+				SF000402 /* App */,
+				SF000407 /* Intents */,
+				SF000403 /* State */,
+				SF000404 /* Views */,
+				SF000405 /* WebView */,
+				SF000406 /* Resources */,
+				SF000013 /* Info.plist */,
+			);
+			path = Stillfeed;
+			sourceTree = "<group>";
+		};
+		SF000402 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				SF000001 /* StillfeedApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		SF000403 /* State */ = {
+			isa = PBXGroup;
+			children = (
+				SF000002 /* FilterSettingsStore.swift */,
+				SF000010 /* DeepLinkRouter.swift */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+		SF000404 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				SF000003 /* LauncherHomeView.swift */,
+				SF000004 /* PlatformBrowserView.swift */,
+				SF000005 /* SettingsView.swift */,
+				SF000006 /* FrictionChallengeSheet.swift */,
+				SF000012 /* ShortcutsSetupSheet.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		SF000405 /* WebView */ = {
+			isa = PBXGroup;
+			children = (
+				SF000007 /* PlatformWebView.swift */,
+				SF000008 /* SafariView.swift */,
+			);
+			path = WebView;
+			sourceTree = "<group>";
+		};
+		SF000406 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				SF000009 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		SF000407 /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				SF000011 /* StillfeedShortcuts.swift */,
+			);
+			path = Intents;
+			sourceTree = "<group>";
+		};
+		SF000499 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				SF000000 /* Stillfeed.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		SF000200 /* Stillfeed */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = SF000501 /* Build configuration list for PBXNativeTarget "Stillfeed" */;
+			buildPhases = (
+				SF000201 /* Sources */,
+				SF000202 /* Frameworks */,
+				SF000203 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Stillfeed;
+			packageProductDependencies = (
+				SF000302 /* StillfeedCore */,
+			);
+			productName = Stillfeed;
+			productReference = SF000000 /* Stillfeed.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		SF000500 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 2710;
+				TargetAttributes = {
+					SF000200 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = SF000502 /* Build configuration list for PBXProject "Stillfeed" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = SF000400;
+			packageReferences = (
+				SF000301 /* XCLocalSwiftPackageReference "StillfeedCore" */,
+			);
+			productRefGroup = SF000499 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				SF000200 /* Stillfeed */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		SF000203 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				SF000109 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		SF000201 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				SF000101 /* StillfeedApp.swift in Sources */,
+				SF000102 /* FilterSettingsStore.swift in Sources */,
+				SF000103 /* LauncherHomeView.swift in Sources */,
+				SF000104 /* PlatformBrowserView.swift in Sources */,
+				SF000105 /* SettingsView.swift in Sources */,
+				SF000106 /* FrictionChallengeSheet.swift in Sources */,
+				SF000107 /* PlatformWebView.swift in Sources */,
+				SF000108 /* SafariView.swift in Sources */,
+				SF000111 /* DeepLinkRouter.swift in Sources */,
+				SF000112 /* StillfeedShortcuts.swift in Sources */,
+				SF000113 /* ShortcutsSetupSheet.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		SF000601 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 7696975TT6;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		SF000602 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 7696975TT6;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		SF000603 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Stillfeed/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Stillfeed;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gabsrp2002.stillfeed.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		SF000604 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Stillfeed/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Stillfeed;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gabsrp2002.stillfeed.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		SF000501 /* Build configuration list for PBXNativeTarget "Stillfeed" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				SF000603 /* Debug */,
+				SF000604 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		SF000502 /* Build configuration list for PBXProject "Stillfeed" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				SF000601 /* Debug */,
+				SF000602 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		SF000301 /* XCLocalSwiftPackageReference "StillfeedCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = StillfeedCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		SF000302 /* StillfeedCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = SF000301 /* XCLocalSwiftPackageReference "StillfeedCore" */;
+			productName = StillfeedCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = SF000500 /* Project object */;
+}
