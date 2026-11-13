@@ -123,6 +123,9 @@ public struct AppCopy: Sendable {
     public let noticeBlockedShortsFeed: String
     public let noticeBlockedShort: String
     public let noticeOpenedShortInPlayer: String
+    public let noticeWebProcessReloaded: String
+    public let noticeWebProcessFailedRepeatedly: String
+    public let noticeNavigationFailed: String
 
     // Settings
     public let settingsTitle: String
@@ -255,6 +258,9 @@ public extension AppCopy {
         noticeBlockedShortsFeed: "Blocked Shorts feed",
         noticeBlockedShort: "Blocked Short",
         noticeOpenedShortInPlayer: "Opened Short in standard player",
+        noticeWebProcessReloaded: "Reloaded page after connection reset",
+        noticeWebProcessFailedRepeatedly: "Page kept closing — tap Reload to try again",
+        noticeNavigationFailed: "Couldn't load page — tap Reload to try again",
         settingsTitle: "Settings",
         doneButton: "Done",
         cancelButton: "Cancel",
@@ -352,6 +358,9 @@ public extension AppCopy {
         noticeBlockedShortsFeed: "Feed de Shorts bloqueado",
         noticeBlockedShort: "Short bloqueado",
         noticeOpenedShortInPlayer: "Short aberto no player padrão",
+        noticeWebProcessReloaded: "Página recarregada após reinício da conexão",
+        noticeWebProcessFailedRepeatedly: "A página fechou repetidamente — toque em Recarregar",
+        noticeNavigationFailed: "Não foi possível carregar — toque em Recarregar",
         settingsTitle: "Configurações",
         doneButton: "Concluir",
         cancelButton: "Cancelar",
@@ -449,6 +458,9 @@ public extension AppCopy {
         noticeBlockedShortsFeed: "Feed de Shorts bloqueado",
         noticeBlockedShort: "Short bloqueado",
         noticeOpenedShortInPlayer: "Short abierto en el reproductor estándar",
+        noticeWebProcessReloaded: "Página recargada tras reinicio de conexión",
+        noticeWebProcessFailedRepeatedly: "La página se cerró repetidamente — toca Recargar",
+        noticeNavigationFailed: "No se pudo cargar la página — toca Recargar",
         settingsTitle: "Ajustes",
         doneButton: "Listo",
         cancelButton: "Cancelar",

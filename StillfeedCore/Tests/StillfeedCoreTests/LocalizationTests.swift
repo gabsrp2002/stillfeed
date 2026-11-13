@@ -15,6 +15,9 @@ final class LocalizationTests: XCTestCase {
             XCTAssertFalse(copy.launcherTagline.isEmpty)
             XCTAssertFalse(copy.settingsTitle.isEmpty)
             XCTAssertFalse(copy.noticeOpenedShortInPlayer.isEmpty)
+            XCTAssertFalse(copy.noticeWebProcessReloaded.isEmpty)
+            XCTAssertFalse(copy.noticeWebProcessFailedRepeatedly.isEmpty)
+            XCTAssertFalse(copy.noticeNavigationFailed.isEmpty)
             XCTAssertFalse(copy.protectionsActiveFormat(5).isEmpty)
         }
 

@@ -1,7 +1,10 @@
 import Observation
+import os
 import StillfeedCore
 import SwiftUI
 import WebKit
+
+private let webViewLogger = Logger(subsystem: "com.gabsrp2002.stillfeed", category: "WebView")
 
 @MainActor
 @Observable
@@ -133,6 +136,10 @@ struct PlatformWebView: UIViewRepresentable {
         let controller: WebBrowserController
         private let policyEngine = NavigationPolicyEngine()
         private var observations: [NSKeyValueObservation] = []
+        private var recentTerminationDates: [Date] = []
+
+        private static let terminationWindowSeconds: TimeInterval = 30
+        private static let maxAutoReloadsPerWindow = 2
 
         init(platform: SocialPlatform, config: StillfeedConfig, controller: WebBrowserController) {
             self.platform = platform
@@ -255,6 +262,56 @@ struct PlatformWebView: UIViewRepresentable {
                 }
             }
             return nil
+        }
+
+        func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+            webViewLogger.warning("WebContent process terminated for platform=\(self.platform.rawValue, privacy: .public)")
+            controller.isLoading = false
+            let copy = AppCopy.forLanguage(config.language)
+
+            if shouldAutoReloadAfterTermination() {
+                controller.showNotice(copy.noticeWebProcessReloaded)
+                if webView.url != nil {
+                    webView.reload()
+                } else {
+                    let entry = platform.entryURL(using: config)
+                    webView.load(PlatformWebView.makeRequest(for: entry, config: config))
+                }
+            } else {
+                controller.showNotice(copy.noticeWebProcessFailedRepeatedly)
+            }
+        }
+
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            handleNavigationFailure(error, phase: "provisional")
+        }
+
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            handleNavigationFailure(error, phase: "committed")
+        }
+
+        private func shouldAutoReloadAfterTermination(now: Date = Date()) -> Bool {
+            recentTerminationDates.removeAll { now.timeIntervalSince($0) > Self.terminationWindowSeconds }
+            guard recentTerminationDates.count < Self.maxAutoReloadsPerWindow else {
+                return false
+            }
+            recentTerminationDates.append(now)
+            return true
+        }
+
+        private func handleNavigationFailure(_ error: Error, phase: String) {
+            let nsError = error as NSError
+            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                return
+            }
+            // WebKit emits domain=WebKitErrorDomain code=102 when decidePolicyFor cancels for a redirect or external open.
+            if nsError.domain == "WebKitErrorDomain" && nsError.code == 102 {
+                return
+            }
+
+            webViewLogger.error("Navigation failed (\(phase, privacy: .public)) domain=\(nsError.domain, privacy: .public) code=\(nsError.code): \(nsError.localizedDescription, privacy: .public)")
+            controller.isLoading = false
+            controller.showNotice(AppCopy.forLanguage(config.language).noticeNavigationFailed)
         }
     }
 }
